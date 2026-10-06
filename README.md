@@ -30,7 +30,7 @@ You need Claude with the **Gmail** and **Google Sheets** connectors turned on.
 **Claude Code:**
 
 ```bash
-git clone https://github.com/OWNER/chatgpt-sources-outreach.git
+git clone https://github.com/mavekjeet/chatgpt-sources-outreach.git
 cp -r chatgpt-sources-outreach/skills/chatgpt-sources-outreach ~/.claude/skills/
 ```
 
