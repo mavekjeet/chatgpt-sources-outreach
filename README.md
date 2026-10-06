@@ -10,8 +10,8 @@ This skill does the boring parts for you:
 
 1. Checks Gmail + Google Sheets are connected to Claude (and walks you through it if not)
 2. Asks what value you're offering and how you want emails handled
-3. Sorts the pages ChatGPT cites (lists vs competitors vs platforms)
-4. Checks each page for a real fix to offer (broken links, outdated prices, dead or renamed tools, wrong facts), with proof
+3. Sorts the pages ChatGPT cites (lists, rival lists you can still join, platforms)
+4. Finds at least one real issue on each page, with proof, in 3 tiers: factual errors (outdated prices, dead tools, broken links), technical blockers (AI crawlers blocked, missing schema), and citation-structure tips from Kevin Indig's ChatGPT study (`scripts/aeo_check.py`)
 5. Finds a real contact email on each site (only emails it actually sees on the page, no guessing)
 6. Logs everything in a Google Sheet
 7. Writes a personal email for each site and delivers it your way:

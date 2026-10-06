@@ -61,7 +61,8 @@ Then you: dedupe the URLs, count how many runs each one appeared in, and sort by
 Give every URL a type:
 
 - **list**: third-party "best X tools" / comparison / review page. These are the targets.
-- **competitor**: page owned by a tool on the list. Skip, they won't add you.
+- **competitor-list**: a rival tool's "best X tools" page that also lists other tools. Still a target: they already list rivals, so they can add you, and a real fix is welcome from anyone. Lower odds, so it goes after the plain lists.
+- **competitor-self**: a rival's page about only itself or itself vs one tool ("Profound vs Otterly"). Skip, there is no list to join.
 - **platform**: G2, Capterra, Reddit, YouTube, Product Hunt etc. Not an email target; action = "create profile / post".
 - **other**: skip unless the user says otherwise.
 
@@ -69,7 +70,10 @@ Open each list page, note if the product is already mentioned, and note one spec
 
 ## Step 3b: find a fix for their page
 
-Run this for every "list" page (even if the user didn't pick it as their value: a real fix is the best opener there is). Check in this order and stop at the first 1 or 2 real problems:
+Run this for every "list" and "competitor-list" page (even if the user didn't pick it as their value: a real fix is the best opener there is). The aim is at least one real, proven issue on every page. Work through three tiers and keep the strongest 1 or 2 finds.
+
+### Tier 1: factual errors (strongest, the writer will want to fix these)
+
 
 1. **Broken links.** Collect every outbound link in the article body (tool links, pricing links, sources). Request each one. Flag 404s, 410s, dead domains, and links that redirect to a homepage or a parked/for-sale page. In Claude Code use `curl -sL -m 15 -A "Mozilla/5.0" -o /dev/null -w "%{http_code} %{url_effective}" <url>`; elsewhere open the link.
    - Only links inside the article body. Ignore fonts, CDNs, scripts, analytics, social share buttons and the site's own nav.
@@ -80,15 +84,40 @@ Run this for every "list" page (even if the user didn't pick it as their value: 
 4. **Wrong facts.** A feature, integration or limit the page states that the tool's own site or docs clearly contradict.
 5. **Stale dates.** Title or intro says one year, but the content or screenshots are clearly older (e.g. "2026" in the title, prices from a plan retired in 2024).
 6. **Broken page elements.** Images that don't load, empty tables, a comparison table cut off.
+7. **The site's own price or plan.** On a competitor-list page, check their own product's price against their own pricing page too.
+8. **Prices that only load in a browser.** If a pricing page shows no numbers to curl, open it in a real browser before giving up. If it still shows none, mark "unverifiable" and don't use it.
+
+### Tier 2: technical blockers (proven, affect whether AI can use the page)
+
+Run `python3 scripts/aeo_check.py <url> [<url> ...]` (in this skill's folder). It checks, for each page:
+
+- **robots.txt blocks AI crawlers** (OAI-SearchBot, ChatGPT-User, GPTBot, PerplexityBot, ClaudeBot, Claude-SearchBot, Google-Extended). A blocked bot means that engine can't cite the page.
+- **noindex**, and **article text missing from the raw HTML** (JS-rendered, so crawlers that don't run JS see an empty page).
+- **No structured data, no dateModified, no author** in the JSON-LD. AI engines and Google use these for freshness and trust (E-E-A-T, AEO Bible "Trust signals").
+- **Title year ahead of the last update** (title says 2026, dateModified is 2025).
+
+### Tier 3: citation structure (suggestions, not errors)
+
+Same script. These come from Kevin Indig's ChatGPT citation study (Growth Memo, "The science of how AI pays attention", 16 Feb 2026, 18,012 verified citations, data from Gauge) and Charles Floate's chunk/retrievability concepts (AEO Bible):
+
+- **Intro throat-clearing** ("in this article", "in today's world"). 44.2% of ChatGPT citations come from the first 30% of the page, and cited intros open with a definitive "X is..." sentence.
+- **Few question headings** (under 25% of H2s). Cited text is ~2x more likely to contain a question, and 78.4% of those come from headings.
+- **No summary / key takeaways section.** Citations bump at 80 to 90% page depth when a summary sits before the footer.
+- **Very long page** (over 3,000 words). Gemini used 13% of text on pages over 3,000 words vs 61% under 1,000 (DEJAN).
+- **Section too long for one chunk** (an H2 section over ~600 words). OpenAI's file search cuts at 800 tokens (~600 words), so a long section gets split mid-idea.
+
+Tier 3 is correlation from one vendor's data, so phrase it as a suggestion, never as "your page is wrong": "one thing that might help ChatGPT keep citing this page: ...". Name the source in one short clause. Use it only when tiers 1 and 2 found nothing.
+
 
 Rules:
 
 - **Proof or it doesn't count.** Every fix needs the exact thing on their page (quote or link) plus the evidence (status code, the tool's pricing page URL, the shutdown announcement). Save both in the sheet.
-- Only check things you can verify right now. No opinions ("this tool is overrated"), no SEO advice, no design feedback.
+- Only check things you can verify right now. No opinions ("this tool is overrated"), no general SEO advice, no design feedback. The only advice allowed is tier 3, with its source.
 - Never point at your own product as the fix, and never flag a competitor unfairly. If a competitor's price on the page is out of date, say so plainly, the same as for anyone else.
-- If nothing real turns up, write "none found". Don't stretch a small thing into a fix.
+- Record the tier with every issue in the sheet (`fix found` starts with T1 / T2 / T3).
+- If all three tiers turn up nothing, write "none found". Don't stretch a small thing into a fix. In practice almost every page has at least a tier 3 point.
 
-## Step 4: find a real contact for each "list" page
+## Step 4: find a real contact for each target page
 
 Look, in this order:
 
