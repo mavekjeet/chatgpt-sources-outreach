@@ -11,13 +11,14 @@ This skill does the boring parts for you:
 1. Checks Gmail + Google Sheets are connected to Claude (and walks you through it if not)
 2. Asks what value you're offering and how you want emails handled
 3. Sorts the pages ChatGPT cites (lists vs competitors vs platforms)
-4. Finds a real contact email on each site (only emails it actually sees on the page, no guessing)
-5. Logs everything in a Google Sheet
-6. Writes a personal email for each site and delivers it your way:
+4. Checks each page for a real fix to offer (broken links, outdated prices, dead or renamed tools, wrong facts), with proof
+5. Finds a real contact email on each site (only emails it actually sees on the page, no guessing)
+6. Logs everything in a Google Sheet
+7. Writes a personal email for each site and delivers it your way:
    - **Drafts:** saved in Gmail, you send
    - **Send after approval:** you approve each batch in chat, Claude sends
    - **Send on its own:** Claude sends up to 20 a day without asking
-7. Tracks replies, does one follow-up, and re-checks ChatGPT every 2 weeks
+8. Tracks replies, does one follow-up, and re-checks ChatGPT every 2 weeks
 
 Built by Jeet ([@iojeet](https://instagram.com/iojeet)) for the "making chatgpt say my name" series.
 

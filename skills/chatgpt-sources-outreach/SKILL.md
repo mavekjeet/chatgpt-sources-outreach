@@ -34,7 +34,7 @@ Ask for anything missing:
    - **A ready-to-paste entry**: one-line description, pricing, who it's for, 2 screenshots. Saves them research time when they update the list.
    - **Free access to test it properly**, e.g. a free 3-month account, for honest feedback. Never in exchange for a listing.
    - **Something their readers would care about**: a real data point, a short case study or an expert quote they can cite. Only if it's true and the user can back it up. Never invent numbers.
-   - **A fix for their page**: a broken link, outdated price or dead tool you spotted on their list (only if you actually found one).
+   - **A fix for their page**: Claude checks every list page for broken links, outdated prices, dead or renamed tools and wrong facts (Step 3b). Only used where it finds a real, proven problem. Recommended: it's the most useful thing you can give a writer and it costs you nothing.
 4. **Your name + sign-off.**
 5. **How to deliver the emails.** Ask exactly this:
    > How do you want the emails handled?
@@ -67,6 +67,24 @@ Give every URL a type:
 
 Open each list page, note if the product is already mentioned, and note one specific detail for the email (a tool they reviewed, how they tested, when they last updated it, anything broken or outdated).
 
+## Step 3b: find a fix for their page
+
+Run this for every "list" page (even if the user didn't pick it as their value: a real fix is the best opener there is). Check in this order and stop at the first 1 or 2 real problems:
+
+1. **Broken links.** Collect every outbound link in the article body (tool links, pricing links, sources). Request each one. Flag 404s, 410s, dead domains, and links that redirect to a homepage or a parked/for-sale page. In Claude Code use `curl -sIL -o /dev/null -w "%{http_code} %{url_effective}" <url>`; elsewhere open the link.
+2. **Outdated prices.** For each tool the page lists with a price, open that tool's own pricing page and compare. Flag only clear mismatches (different number, plan no longer exists, free plan removed or added).
+3. **Dead, renamed or acquired tools.** Flag tools whose site is gone, that shut down, or that now go by another name (check the tool's own site or its official announcement).
+4. **Wrong facts.** A feature, integration or limit the page states that the tool's own site or docs clearly contradict.
+5. **Stale dates.** Title or intro says one year, but the content or screenshots are clearly older (e.g. "2026" in the title, prices from a plan retired in 2024).
+6. **Broken page elements.** Images that don't load, empty tables, a comparison table cut off.
+
+Rules:
+
+- **Proof or it doesn't count.** Every fix needs the exact thing on their page (quote or link) plus the evidence (status code, the tool's pricing page URL, the shutdown announcement). Save both in the sheet.
+- Only check things you can verify right now. No opinions ("this tool is overrated"), no SEO advice, no design feedback.
+- Never point at your own product as the fix, and never flag a competitor unfairly. If a competitor's price on the page is out of date, say so plainly, the same as for anyone else.
+- If nothing real turns up, write "none found". Don't stretch a small thing into a fix.
+
 ## Step 4: find a real contact for each "list" page
 
 Look, in this order:
@@ -90,7 +108,7 @@ Create one spreadsheet (or use the one the user gives) with two tabs.
 
 **Outreach** tab, one row per page:
 
-| url | site | type | times cited | already mentions us | detail for email | contact name | email | found on | action | status | sent at | notes |
+| url | site | type | times cited | already mentions us | detail for email | fix found | fix evidence | contact name | email | found on | action | status | sent at | notes |
 
 `action` = email / contact form / create profile / skip. `status` starts as "to write".
 
@@ -108,6 +126,8 @@ Hi {first name or "there"},
 I read your "{article title}", {the specific detail, said honestly}.
 
 I'm {your name}, I built {product}. {product one-liner}
+
+{if a fix was found, put it first, e.g. "quick heads up: the {tool} link in your list goes to a 404 now, their pricing page moved to {new url}."}
 
 {the value, in one or two lines. e.g. "If you update the list, here's a ready-to-paste entry (pricing, who it's for, 2 screenshots) so you don't have to dig." or "Happy to give you {free access} to test it properly, no strings. I'd value honest feedback even if it doesn't make the cut."}
 
