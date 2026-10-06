@@ -71,7 +71,10 @@ Open each list page, note if the product is already mentioned, and note one spec
 
 Run this for every "list" page (even if the user didn't pick it as their value: a real fix is the best opener there is). Check in this order and stop at the first 1 or 2 real problems:
 
-1. **Broken links.** Collect every outbound link in the article body (tool links, pricing links, sources). Request each one. Flag 404s, 410s, dead domains, and links that redirect to a homepage or a parked/for-sale page. In Claude Code use `curl -sIL -o /dev/null -w "%{http_code} %{url_effective}" <url>`; elsewhere open the link.
+1. **Broken links.** Collect every outbound link in the article body (tool links, pricing links, sources). Request each one. Flag 404s, 410s, dead domains, and links that redirect to a homepage or a parked/for-sale page. In Claude Code use `curl -sL -m 15 -A "Mozilla/5.0" -o /dev/null -w "%{http_code} %{url_effective}" <url>`; elsewhere open the link.
+   - Only links inside the article body. Ignore fonts, CDNs, scripts, analytics, social share buttons and the site's own nav.
+   - 403, 429 or a timeout usually means the site blocks bots, not that the page is dead. Open it in a real browser before flagging; if it loads there, it's fine.
+   - Only 404, 410, a dead domain, or a redirect to a homepage / parked page counts as broken.
 2. **Outdated prices.** For each tool the page lists with a price, open that tool's own pricing page and compare. Flag only clear mismatches (different number, plan no longer exists, free plan removed or added).
 3. **Dead, renamed or acquired tools.** Flag tools whose site is gone, that shut down, or that now go by another name (check the tool's own site or its official announcement).
 4. **Wrong facts.** A feature, integration or limit the page states that the tool's own site or docs clearly contradict.
