@@ -1,27 +1,53 @@
 ---
 name: chatgpt-sources-outreach
-description: Use when the user wants their product mentioned by ChatGPT for a prompt like "what is the best X tool" and asks to find the pages ChatGPT cites, find the contact emails behind those pages, log them in a Google Sheet, or draft outreach emails to those site owners. Triggers on "chatgpt sources outreach", "email the sites chatgpt reads", "find emails for these urls", "get my saas on chatgpt lists".
+description: Use when the user wants their product mentioned by ChatGPT for a prompt like "what is the best X tool" and asks to find the pages ChatGPT cites, find the contact emails behind those pages, log them in a Google Sheet, or email those site owners. Triggers on "chatgpt sources outreach", "email the sites chatgpt reads", "find emails for these urls", "get my saas on chatgpt lists".
 ---
 
 # ChatGPT sources outreach
 
-ChatGPT answers "best tool" prompts mostly from other people's pages: listicles, comparisons and reviews. This skill finds those pages, finds a real person to email at each one, logs everything in a Google Sheet and writes a personal draft email for each site. The user reviews and sends every email themselves.
+ChatGPT answers "best tool" prompts mostly from other people's pages: listicles, comparisons and reviews. This skill finds those pages, finds a real person at each one, logs everything in a Google Sheet and emails them something useful. The user picks whether Claude saves drafts, sends after approval, or sends on its own.
 
-Needs: Claude Code (or Claude with web access), the Gmail connector and the Google Sheets connector.
+## Objective of the campaign
 
-## Step 0: ask for the inputs (once, at the start)
+**Goal:** get your product named on the pages ChatGPT already reads for your prompt, so ChatGPT starts naming it too.
 
-Ask for anything missing, in one message:
+**How:** make it easy and worth it for the writer to look at your product when they next update their page. Every email gives them something they can use whether or not they add you. Nobody owes you a spot, and you never trade free stuff for a listing.
+
+## Step 0: connect Gmail and Google Sheets first
+
+Before anything else, check that the **Gmail** and **Google Sheets** connectors are available (look for their tools). If either is missing, stop and tell the user:
+
+> Before we start, connect Gmail and Google Sheets to Claude.
+> Claude.ai / desktop: Settings > Connectors > Gmail and Google Sheets > Connect, then sign in with the email you want to send from.
+> Claude Code: add them as MCP connectors, then restart the session.
+> Tell me when both are connected.
+
+When they say done, confirm by listing their Gmail labels and creating nothing yet. Tell them which email address is connected, so they know who the emails will come from.
+
+## Step 1: ask for the inputs (one message)
+
+Ask for anything missing:
 
 1. **The prompt** you want to show up for, e.g. "what is the best ai tool for aeo".
 2. **Your product**: name, URL, and one sentence that says what it IS ("Acme is an X that does Y for Z"). Plain and definitive, no hype words.
-3. **Your offer** to the site owner, e.g. "a free 3-month account in exchange for honest feedback". Keep it about feedback, never "list me and get it free".
-4. **Your name + sign-off** for the emails.
-5. **The source URLs**, if they already have them (CSV, sheet or pasted list). If not, do Step 1.
+3. **The value you give the writer.** Pick one or more (suggest the first two if they're unsure):
+   - **A ready-to-paste entry**: one-line description, pricing, who it's for, 2 screenshots. Saves them research time when they update the list.
+   - **Free access to test it properly**, e.g. a free 3-month account, for honest feedback. Never in exchange for a listing.
+   - **Something their readers would care about**: a real data point, a short case study or an expert quote they can cite. Only if it's true and the user can back it up. Never invent numbers.
+   - **A fix for their page**: a broken link, outdated price or dead tool you spotted on their list (only if you actually found one).
+4. **Your name + sign-off.**
+5. **How to deliver the emails.** Ask exactly this:
+   > How do you want the emails handled?
+   > **A. Drafts:** I save every email as a Gmail draft. You read and send them yourself.
+   > **B. Send after approval:** I show you each batch here, you say "send", I send them.
+   > **C. Send on its own:** I send them without asking you, within the safety limits below.
+6. **The source URLs**, if they already have them (CSV, sheet or pasted list). If not, do Step 2.
 
-## Step 1: collect the pages ChatGPT reads
+Save the answers to the sheet's "Setup" tab in Step 5 so a later session can pick up where this one stopped.
 
-The user does this part in their own ChatGPT (you cannot run their account):
+## Step 2: collect the pages ChatGPT reads
+
+The user does this in their own ChatGPT (you cannot run their account):
 
 1. Open ChatGPT with search on, paste the prompt, send.
 2. Click **Sources** under the answer. Copy every URL.
@@ -30,71 +56,97 @@ The user does this part in their own ChatGPT (you cannot run their account):
 
 Then you: dedupe the URLs, count how many runs each one appeared in, and sort by that count (most repeated first).
 
-## Step 2: sort the list
+## Step 3: sort the list
 
 Give every URL a type:
 
 - **list**: third-party "best X tools" / comparison / review page. These are the targets.
-- **competitor**: page owned by a tool on the list (e.g. a vendor comparing itself). Skip, they will not add you.
-- **platform**: G2, Capterra, Reddit, YouTube, Product Hunt etc. Not an email target; note "create profile / post" as the action instead.
-- **other**: anything else. Skip unless the user says otherwise.
+- **competitor**: page owned by a tool on the list. Skip, they won't add you.
+- **platform**: G2, Capterra, Reddit, YouTube, Product Hunt etc. Not an email target; action = "create profile / post".
+- **other**: skip unless the user says otherwise.
 
-Also note if your product is already mentioned on the page (open it and search for the name).
+Open each list page, note if the product is already mentioned, and note one specific detail for the email (a tool they reviewed, how they tested, when they last updated it, anything broken or outdated).
 
-## Step 3: find a real contact for each "list" page
+## Step 4: find a real contact for each "list" page
 
-For each list page, open the site and look, in this order:
+Look, in this order:
 
 1. The article itself: author name, author bio, author page.
-2. Contact page, About page, "write for us" / "contribute" page, footer, privacy policy, imprint.
+2. Contact, About, "write for us" / "contribute" pages, footer, privacy policy, imprint.
 3. `mailto:` links anywhere on those pages.
 
 Rules:
 
 - Only record emails you actually saw on a page, and record the URL where you saw it. Never guess a pattern (firstname@domain) and never use paid email-finder databases unless the user asks.
-- Prefer the author or editor over generic inboxes. A generic inbox (hello@, contact@) is fine if it is the only one.
+- Prefer the author or editor over generic inboxes. A generic inbox (hello@, contact@) is fine if it's the only one.
 - No email but a contact form: record the form URL, action = "contact form" (the user fills it in by hand).
 - Nothing at all: action = "skip".
 
-## Step 4: log it in Google Sheets
+## Step 5: log it in Google Sheets
 
-Create one sheet (or use the one the user gives) with these columns, one row per page:
+Create one spreadsheet (or use the one the user gives) with two tabs.
 
-| url | site | type | times cited | already mentions us | contact name | email | found on | action | status | notes |
+**Setup** tab: the answers from Step 1 (prompt, product, one-liner, value, sign-off, delivery mode, connected email).
 
-`action` = email / contact form / create profile / skip. `status` starts as "to draft".
+**Outreach** tab, one row per page:
+
+| url | site | type | times cited | already mentions us | detail for email | contact name | email | found on | action | status | sent at | notes |
+
+`action` = email / contact form / create profile / skip. `status` starts as "to write".
 
 Share the sheet link with the user before writing any email.
 
-## Step 5: draft the emails (drafts only, never send)
+## Step 6: write the emails
 
-For each row with action = email, create a **Gmail draft** (not a sent email) using the template below. Personalise the first line with something real from their article (a tool they reviewed, how they tested, the date they updated it). Under 120 words. Plain text, no images, no tracking.
+One email per row with action = email. Under 120 words, plain text, no images, no tracking. Lead with the value, not the ask. Use the real detail from Step 3.
 
 ```
-Subject: {product} for your {article topic} list?
+Subject: {short, specific to their page, e.g. "your best AEO tools list"}
 
 Hi {first name or "there"},
 
-I read your "{article title}", {one specific, honest line about it}.
+I read your "{article title}", {the specific detail, said honestly}.
 
 I'm {your name}, I built {product}. {product one-liner}
 
-If you ever update the list, I'd love an honest look. Happy to give you {offer} so you can test it properly, no strings, and I'd value your feedback even if it doesn't make the cut.
+{the value, in one or two lines. e.g. "If you update the list, here's a ready-to-paste entry (pricing, who it's for, 2 screenshots) so you don't have to dig." or "Happy to give you {free access} to test it properly, no strings. I'd value honest feedback even if it doesn't make the cut."}
 
 {sign-off}
 
 (If you'd rather not get emails like this, just say so and I won't follow up.)
 ```
 
-Rules:
+Rules for every mode:
 
 - One email per site, one person per site.
-- Never ask for a link or a placement in exchange for the free account. The account is for feedback. If they review or list you after using it, remind them to disclose they got it free.
-- Max 20 drafts a day so the user can actually read each one before sending.
-- After creating the drafts, update `status` to "drafted" and tell the user how many drafts are waiting in Gmail.
+- Never ask for a link or a placement in exchange for free access. If they review or list the product after getting it free, ask them to disclose that.
+- Never invent stats, customers or results.
 
-## Step 6: follow up and track
+## Step 7: deliver, based on the mode the user picked
 
-- The user sends the drafts. When they say "check replies", search Gmail for replies to those threads and update `status` (replied / interested / not interested / no reply).
-- One follow-up only, 5 to 7 days later, as a short reply in the same thread. Never follow up with someone who said no.
-- Re-run the prompt in ChatGPT every 2 weeks and add a column with the date and whether your product was named. Answers vary, so report "named in X of 3 runs", never a single run.
+Safety limits for all modes: max 20 emails a day, only to emails recorded in Step 4, never to anyone with status "opted out" or "not interested".
+
+**A. Drafts**
+- Create each email as a Gmail draft.
+- Set `status` = "drafted".
+- Tell the user how many drafts are waiting and that nothing has been sent.
+
+**B. Send after approval**
+- Show the user the next batch (up to 10) right here in chat: to, subject, body.
+- Wait for an explicit "send" (they can also say "send all but 3" or edit any email).
+- Send only the approved ones. Set `status` = "sent", fill `sent at`.
+- Repeat until the day's limit or the list is done.
+
+**C. Send on its own**
+- Before the first send, confirm once: "I'll send up to 20 emails a day from {connected email} without asking you. OK?" Only start after a clear yes.
+- Send the emails, oldest-cited rows first. Set `status` = "sent", fill `sent at`.
+- Skip any row where the email or the detail looks shaky; mark it "needs review" instead of sending.
+- After each batch, report: how many sent, to which sites, and the sheet link.
+
+If the Gmail connector can't send (only draft), say so and fall back to mode A.
+
+## Step 8: follow up and track
+
+- When the user says "check replies" (or in mode C, at the start of each new session), search Gmail for replies to the sent threads and update `status` (replied / interested / not interested / opted out / no reply).
+- One follow-up only, 5 to 7 days after the first email, as a short reply in the same thread, using the same delivery mode. Never follow up with someone who said no or asked not to be emailed.
+- Re-run the prompt in ChatGPT every 2 weeks and add a column with the date and whether the product was named. Answers vary, so report "named in X of 3 runs", never a single run.
